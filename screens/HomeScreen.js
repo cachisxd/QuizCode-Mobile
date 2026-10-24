@@ -1,61 +1,34 @@
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import { topics } from '../data/questions';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { categorias } from '../data/questions';
 
 export default function HomeScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Elige un tema para repasar</Text>
-      <FlatList
-        data={topics}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingBottom: 24 }}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>{item.title}</Text>
-            <View style={styles.buttonRow}>
-              <TouchableOpacity
-                style={[styles.button, styles.buttonSecondary]}
-                onPress={() =>
-                  navigation.navigate('Flashcards', { topicId: item.id, topicTitle: item.title })
-                }
-              >
-                <Text style={styles.buttonTextSecondary}>Flashcards</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() =>
-                  navigation.navigate('Quiz', { topicId: item.id, topicTitle: item.title })
-                }
-              >
-                <Text style={styles.buttonText}>Quiz</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-      />
-    </View>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Text style={styles.saludo}>¿Listo para jugar? Elige una categoría</Text>
+      <View style={styles.grid}>
+        {categorias.map((c, i) => (
+          <TouchableOpacity
+            key={c.id}
+            style={[styles.tile, { backgroundColor: c.fondo }, i === categorias.length - 1 && styles.tileAncho]}
+            onPress={() => navigation.navigate('Quiz', { categoriaId: c.id, titulo: c.nombre })}
+          >
+            <Text style={styles.emoji}>{c.emoji}</Text>
+            <Text style={[styles.nombre, { color: c.texto }]}>{c.nombre}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F6FA', paddingTop: 24, paddingHorizontal: 16 },
-  header: { fontSize: 20, fontWeight: '700', marginBottom: 16, color: '#1B1F3B' },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 2,
-  },
-  cardTitle: { fontSize: 16, fontWeight: '600', marginBottom: 12, color: '#1B1F3B' },
-  buttonRow: { flexDirection: 'row', justifyContent: 'flex-end' },
-  button: { backgroundColor: '#4C5FD5', paddingVertical: 8, paddingHorizontal: 14, borderRadius: 8, marginLeft: 8 },
-  buttonSecondary: { backgroundColor: '#E7E9F7' },
-  buttonText: { color: '#FFFFFF', fontWeight: '600' },
-  buttonTextSecondary: { color: '#4C5FD5', fontWeight: '600' },
+  container: { flex: 1, backgroundColor: '#F5F6FA' },
+  content: { padding: 16 },
+  saludo: { fontSize: 15, color: '#6B7080', marginBottom: 14 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  tile: { width: '48%', minHeight: 100, borderRadius: 14, padding: 14, marginBottom: 12, justifyContent: 'center' },
+  tileAncho: { width: '100%' },
+  emoji: { fontSize: 26, marginBottom: 4 },
+  nombre: { fontSize: 16, fontWeight: '600' },
 });
